@@ -8,7 +8,6 @@ from hermes_python.ontology import *
 from datetime import datetime
 from pytz import timezone
 import io
-import subprocess
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
@@ -75,7 +74,7 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    if intentMessage.intent.intent_name == 'Joseph:askTime':
+    if intentMessage.intent.intent_name == 'duch:askTime':
 
         sentence = 'Il est '
         print(intentMessage.intent.intent_name)
@@ -93,7 +92,6 @@ def action_wrapper(hermes, intentMessage, conf):
 
         print(sentence)
 
-        # hermes.publish_continue_session(intent_message.session_id, sentence, ["Joseph:greetings"])
         hermes.publish_end_session(intentMessage.session_id, sentence)
 
 
