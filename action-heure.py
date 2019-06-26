@@ -33,15 +33,23 @@ def verbalise_minute(i):
 		return "quarante et une"
 	elif i == 51:
 		return "cinquante et une"
+    elif i == 15:
+        return "et quart"
+    elif i == 30:
+        return "et demi"
+    elif i == 40:
+        return "moins vingt"
+    elif i == 45:
+        return "moins le quart"
+    elif i == 50:
+        return "moins dix"
+    elif i == 50:
+        return "moins cinq"
 	else:
 		return "{0}".format(str(i)) 
 
 
 def intent_received(hermes, intent_message):
-
-	print()
-	print(intent_message.intent.intent_name)
-	print ()
 
 	if intent_message.intent.intent_name == 'Joseph:askTime':
 
@@ -50,15 +58,19 @@ def intent_received(hermes, intent_message):
 
 		now = datetime.now(timezone('Europe/Paris'))
 
-		sentence += verbalise_hour(now.hour) + " " + verbalise_minute(now.minute)
+        minute = verbalise_minute(now.minute)
+        
+        if now.hour > 12
+            heure = "{0} heure".format(str(now.hour - 12)) + "de l'après-midi" + minute
+        elif
+            heure = verbalise_hour(now.hour) + minute
+
+		sentence += heure
+            
 		print(sentence)
 
 		# hermes.publish_continue_session(intent_message.session_id, sentence, ["Joseph:greetings"])
 		hermes.publish_end_session(intent_message.session_id, sentence)
-
-	elif intent_message.intent.intent_name == 'Joseph:greetings':
-
-		hermes.publish_end_session(intent_message.session_id, "De rien!")
 
 
 with Hermes(MQTT_ADDR) as h:
