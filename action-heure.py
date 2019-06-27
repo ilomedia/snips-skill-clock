@@ -74,7 +74,6 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    if intentMessage.intent.intent_name == 'duch:askTime':
 
         sentence = 'Il est '
         print(intentMessage.intent.intent_name)
@@ -92,10 +91,10 @@ def action_wrapper(hermes, intentMessage, conf):
 
         print(sentence)
 
-        hermes.publish_end_session(intentMessage.session_id, sentence)
+        hermes.publish_end_session(intentMessage.session_id, sentence.decode("latin-1"))
 
 
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
-        h.subscribe_intents(subscribe_intent_callback).start()
+        h.subscribe_intent("askTime", subscribe_intent_callback).start()
