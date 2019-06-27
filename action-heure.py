@@ -12,6 +12,7 @@ import io
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
+
 class SnipsConfigParser(ConfigParser.SafeConfigParser):
     def to_dict(self):
         return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
@@ -68,15 +69,16 @@ def verbalise_minute(i):
     else:
         return "{0}".format(str(i))
 
-def subscribe_intent_callback(hermes, intentMessage):
+
+def subscribe_intent_callback(hermes, intent_message):
     conf = read_configuration_file(CONFIG_INI)
-    action_wrapper(hermes, intentMessage, conf)
+    action_wrapper(hermes, intent_message, conf)
 
 
-def action_wrapper(hermes, intentMessage, conf):
+def action_wrapper(hermes, intent_message, conf):
 
         sentence = 'Il est '
-        print(intentMessage.intent.intent_name)
+        print(intent_message.intent.intent_name)
 
         now = datetime.now(timezone('Europe/Paris'))
 
@@ -91,7 +93,7 @@ def action_wrapper(hermes, intentMessage, conf):
 
         print(sentence)
 
-        hermes.publish_end_session(intentMessage.session_id, sentence.decode("latin-1"))
+        hermes.publish_end_session(intent_message.session_id, sentence.decode("latin-1"))
 
 
 if __name__ == "__main__":
