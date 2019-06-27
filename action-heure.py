@@ -87,7 +87,7 @@ def action_wrapper(hermes, intent_message, conf):
     minute = verbalise_minute(now.minute)
 
     if now.hour > 12:
-        heure = "{0} heure".format(str(now.hour - 12)) + " " + minute + " de l'apres-midi"
+        heure = "{0} heure".format(str(now.hour - 12)) + " " + minute + ", de l'apres-midi"
     else:
         heure = verbalise_hour(now.hour) + " " + minute
 
