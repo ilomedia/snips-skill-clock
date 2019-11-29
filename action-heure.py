@@ -22,22 +22,31 @@ def read_configuration_file(configuration_file):
     try:
         with io.open(configuration_file, encoding=CONFIGURATION_ENCODING_FORMAT) as f:
             conf_parser = SnipsConfigParser()
-            conf_parser.readfp(f)
+            conf_parser.read_file(f)
             return conf_parser.to_dict()
     except (IOError, configparser.Error) as e:
         return dict()
 
 
-def verbalise_hour(i):
-    if i in [40, 45, 50, 55]:
-        i += 1
-    if i == 0:
+def subscribe_intent_callback(hermes, intentMessage):
+    conf = read_configuration_file(CONFIG_INI)
+
+    if intentMessage.asr_confidence < conf['global']['confidence_threshold']:
+        hermes.publish_end_session(intentMessage.session_id)
+    else:
+        action_wrapper(hermes, intentMessage, conf)
+
+
+def verbalise_hour(h, m):
+    if m in [40, 45, 50, 55]:
+        h += 1
+    if h == 0:
         return "minuit"
-    elif i == 1:
+    elif h == 1:
         return "une heure"
-    elif i == 12:
+    elif h == 12:
         return "midi"
-    elif i == 21:
+    elif h == 21:
         return "vingt et une heures"
     else:
         return "{0} heures".format(str(i))
@@ -72,30 +81,25 @@ def verbalise_minute(i):
         return "{0}".format(str(i))
 
 
-def subscribe_intent_callback(hermes, intent_message):
-    conf = read_configuration_file(CONFIG_INI)
-    action_wrapper(hermes, intent_message, conf)
-
-
-def action_wrapper(hermes, intent_message, conf):
+def action_wrapper(hermes, intentMessage, conf):
 
     sentence = 'Il est '
-    print(intent_message.intent.intent_name)
+    print(intentMessage.intent.intent_name)
 
     now = datetime.now(timezone('Europe/Paris'))
 
     minute = verbalise_minute(now.minute)
 
     if now.hour > 12:
-        heure = "{0} heure".format(str(now.hour - 12)) + " " + minute + ", de l'après-midi"
+        heure = verbalise_hour(now.hour - 12, now.minute) + " " + minute + ", de laprès midi"
     else:
-        heure = verbalise_hour(now.hour) + " " + minute
+        heure = verbalise_hour(now.hour, now.minute) + " " + minute
 
     sentence += heure
 
     print(sentence)
 
-    hermes.publish_end_session(intent_message.session_id, sentence)
+    hermes.publish_end_session(intentMessage.session_id, sentence)
 
 
 if __name__ == "__main__":
